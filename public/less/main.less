@@ -1,8 +1,15 @@
-@wordz-cell-size: 100px;
-@mini-wordz-cell-size: 20px;
+@mini-wordz-cell-size: 30px;
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
 
 body {
     font-family: Arial, sans-serif;
+    width: 100%;
+    position: absolute;
+    margin: 0px;
+    padding: 2% 10%;
 }
 
 #arrowSVG {
@@ -18,27 +25,27 @@ body {
 }
 .wordzSimulator > div {
     border: 1px solid black;
-    box-sizing: border-box;
-    flex-basis: 25%;
+    flex-basis: 24%;
+    margin: 0.5%;
     // Center text
     text-align: center;
     vertical-align: middle;
 }
 
 #wordzSimulator {
-    width: @wordz-cell-size * 4;
+    margin: auto;
+    padding: 20px;
 }
 #wordzSimulator > div {
-    font-size: x-large;
-    height: @wordz-cell-size;
-    line-height: @wordz-cell-size;
+    font-size: xx-large;
+    border-radius: 0.5em;
 }
 
 .miniWordzSimulator {
     width: @mini-wordz-cell-size * 4;
 }
 .miniWordzSimulator > div {
-    font-size: small;
+    font-size: medium;
     height: @mini-wordz-cell-size;
     line-height: @mini-wordz-cell-size;
 }
@@ -50,5 +57,41 @@ body {
 }
 
 #findWordz {
-    display: none;
+    padding: 10px;
+    margin-top: 10px;
+    width: 100%;
+    font-size: x-large;
+}
+
+#letters {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid black;
+    outline: none;
+    font-size: x-large;
+    margin-bottom: 10px;
+    &:hover {
+        border: 2px solid rgb(24, 158, 147);
+    }
+    &:focus {
+        border: 2px solid rgb(35, 223, 207);
+    }
+}
+
+#wordz {
+    display: flex;
+    padding-top: 1em;
+    >div {
+        padding: 1em;
+    }
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.badButton {
+    background-color: rgb(204, 86, 86);
+}
+.doneButton {
+    background-color: rgb(124, 206, 124);
 }

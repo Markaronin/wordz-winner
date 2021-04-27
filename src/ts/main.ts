@@ -7,23 +7,33 @@ const wordzDiv = document.getElementById("wordz") as HTMLDivElement;
 const arrowSVG = document.getElementById("arrowSVG") as HTMLOrSVGImageElement;
 
 let letters = "";
+const fillerLetters = ["","","","","","","","","","","","","","","",""];
+let allCombinations: number[][] = [];
 function render() {
     wordzSimulatorDiv.innerHTML = "";
+    wordzDiv.innerHTML = "";
+    arrowSVG.querySelectorAll('line').forEach(line => line.remove());
 
-    Array.from(letters).forEach((letter) => {
+    Array.from([...letters.split(''), ...fillerLetters].slice(0, 16)).forEach((letter) => {
         const letterDiv = document.createElement("div");
-
         letterDiv.innerText = letter;
         wordzSimulatorDiv.appendChild(letterDiv);
+        letterDiv.style.height = letterDiv.offsetWidth + "px";
+        letterDiv.style.lineHeight = letterDiv.offsetWidth + "px";
     });
+    allCombinations.forEach((combination) => drawGraphicFromPath(combination));
 }
 
-const resizeArrowSVG = () => {
+const resizeWindow = () => {
+    wordzSimulatorDiv.style.width = Math.min(window.innerWidth, window.innerHeight) * 0.7 + "px";
+    render();
     arrowSVG.setAttribute("height", document.body.scrollHeight.toString());
     arrowSVG.setAttribute("width", document.body.scrollWidth.toString());
 };
-resizeArrowSVG();
-window.onresize = resizeArrowSVG;
+window.onload = () => {
+    resizeWindow();
+    window.onresize = resizeWindow;
+}
 
 function existsWordStartingWithLetters(letters: string): boolean {
     let low = 0;
@@ -113,7 +123,19 @@ function getAllCombinations() {
             }
         });
     }
-    return allPaths.sort((a, b) => b.length - a.length);
+    return allPaths.sort((a, b) => {
+        if (b.length === a.length) {
+            if (getWordFromPath(b) < getWordFromPath(a)) {
+                return 1;
+            } else if (getWordFromPath(a) < getWordFromPath(b)) {
+                return -1;
+            } else {
+                return 0;
+            }
+        } else {
+            return b.length - a.length;
+        }
+    });
 }
 
 function drawArrow(x1: number, y1: number, x2: number, y2: number) {
@@ -134,9 +156,26 @@ function getCenterOfDiv(div: HTMLDivElement): { x: number; y: number } {
 }
 
 function drawGraphicFromPath(path: number[]) {
+    const containerDiv = document.createElement('div')
     const graphicDiv = document.createElement("div");
     graphicDiv.classList.add("miniWordzSimulator");
     graphicDiv.classList.add("wordzSimulator");
+    const wordSpan = document.createElement("span");
+    wordSpan.innerText = getWordFromPath(path);
+    const doneButton = document.createElement('button');
+    doneButton.classList.add("doneButton")
+    doneButton.innerText = "✓"
+    doneButton.onclick = () => {
+        containerDiv.style.backgroundColor = "#defca4"
+    }
+    const badButton = document.createElement('button');
+    badButton.classList.add("badButton")
+    badButton.innerText = "x"
+    badButton.onclick = () => {
+        containerDiv.style.backgroundColor = "#ffb1b0"
+    }
+
+
     const allLetterDivs: HTMLDivElement[] = [];
     Array.from(letters).forEach((letter) => {
         const letterDiv = document.createElement("div");
@@ -145,7 +184,11 @@ function drawGraphicFromPath(path: number[]) {
         letterDiv.innerText = letter;
         graphicDiv.appendChild(letterDiv);
     });
-    wordzDiv.appendChild(graphicDiv);
+    containerDiv.appendChild(graphicDiv);
+    containerDiv.appendChild(wordSpan);
+    containerDiv.appendChild(doneButton);
+    containerDiv.appendChild(badButton);
+    wordzDiv.appendChild(containerDiv);
     for (let i = 1; i < path.length; i++) {
         let pos1 = getCenterOfDiv(allLetterDivs[path[i - 1]]);
         let pos2 = getCenterOfDiv(allLetterDivs[path[i]]);
@@ -154,27 +197,37 @@ function drawGraphicFromPath(path: number[]) {
 }
 
 findWordzButton.onclick = () => {
-    wordzDiv.innerHTML = "";
-    const allCombinations = getAllCombinations();
-    allCombinations.forEach((combination) => {
-        wordzDiv.appendChild(document.createElement("hr"));
-        drawGraphicFromPath(combination);
-        const wordSpan = document.createElement("span");
-        wordSpan.innerText = getWordFromPath(combination);
-        wordzDiv.appendChild(wordSpan);
+    allCombinations = getAllCombinations().filter((combination, i, combinations) => {
+        if (i === 0) {
+            return true;
+        } else if (getWordFromPath(combinations[i - 1]) === getWordFromPath(combination)) {
+            return false;
+        }
+        return true;
     });
-    resizeArrowSVG();
+    resizeWindow();
 };
 
+lettersInput.onkeydown = (event: KeyboardEvent) => {
+    if (lettersInput.value.length === 16 && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+        event.preventDefault();
+    }
+}
+
+let _lettersInputCache = letters;
 lettersInput.onkeyup = () => {
-    letters = lettersInput.value;
-    render();
-    if (letters.length === 16) {
-        findWordzButton.style.display = "block";
-    } else if(letters.length < 16) {
-        findWordzButton.style.display = "none";
-    } else if(letters.length > 16) {
-        findWordzButton.style.display = "none";
-        lettersInput.value = lettersInput.value.substring(0, 16)
+    if (lettersInput.value.length === 16) {
+        findWordzButton.disabled = false;
+    } else if(lettersInput.value.length < 16) {
+        allCombinations = [];
+        findWordzButton.disabled = true;
+    } else if(lettersInput.value.length > 16) {
+        findWordzButton.disabled = false;
+        lettersInput.value = lettersInput.value.substring(0, 16);
+    }
+    if (_lettersInputCache !== lettersInput.value) {
+        letters = lettersInput.value;
+        render();
+        _lettersInputCache = letters;
     }
 };
