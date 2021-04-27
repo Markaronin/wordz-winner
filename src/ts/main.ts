@@ -14,14 +14,19 @@ function render() {
     wordzDiv.innerHTML = "";
     arrowSVG.querySelectorAll('line').forEach(line => line.remove());
 
-    Array.from([...letters.split(''), ...fillerLetters].slice(0, 16)).forEach((letter) => {
-        const letterDiv = document.createElement("div");
-        letterDiv.innerText = letter;
-        wordzSimulatorDiv.appendChild(letterDiv);
-        letterDiv.style.height = letterDiv.offsetWidth + "px";
-        letterDiv.style.lineHeight = letterDiv.offsetWidth + "px";
-    });
-    allCombinations.forEach((combination) => drawGraphicFromPath(combination));
+    if (allCombinations.length === 0) {
+        Array.from([...letters.split(''), ...fillerLetters].slice(0, 16)).forEach((letter) => {
+            const letterDiv = document.createElement("div");
+            letterDiv.innerText = letter;
+            wordzSimulatorDiv.appendChild(letterDiv);
+            letterDiv.style.height = letterDiv.offsetWidth + "px";
+            letterDiv.style.lineHeight = letterDiv.offsetWidth + "px";
+        });
+        findWordzButton.style.display = "block";
+    } else {
+        findWordzButton.style.display = "none";
+        allCombinations.forEach((combination) => drawGraphicFromPath(combination));
+    }
 }
 
 const resizeWindow = () => {
@@ -196,7 +201,7 @@ function drawGraphicFromPath(path: number[]) {
     }
 }
 
-findWordzButton.onclick = () => {
+function startSearch() {
     allCombinations = getAllCombinations().filter((combination, i, combinations) => {
         if (i === 0) {
             return true;
@@ -206,11 +211,17 @@ findWordzButton.onclick = () => {
         return true;
     });
     resizeWindow();
-};
+}
+
+findWordzButton.onclick = startSearch;
 
 lettersInput.onkeydown = (event: KeyboardEvent) => {
-    if (lettersInput.value.length === 16 && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
-        event.preventDefault();
+    if (lettersInput.value.length === 16) {
+        if(["Enter", "Return"].includes(event.key)) {
+            startSearch()
+        } else if (!["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+            event.preventDefault();
+        } 
     }
 }
 
