@@ -154,6 +154,7 @@ function drawGraphicFromPath(path: number[]) {
 }
 
 findWordzButton.onclick = () => {
+    wordzDiv.innerHTML = "";
     const allCombinations = getAllCombinations();
     allCombinations.forEach((combination) => {
         wordzDiv.appendChild(document.createElement("hr"));
@@ -170,7 +171,10 @@ lettersInput.onkeyup = () => {
     render();
     if (letters.length === 16) {
         findWordzButton.style.display = "block";
-    } else {
+    } else if(letters.length < 16) {
         findWordzButton.style.display = "none";
+    } else if(letters.length > 16) {
+        findWordzButton.style.display = "none";
+        lettersInput.value = lettersInput.value.substring(0, 16)
     }
 };
