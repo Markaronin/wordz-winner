@@ -6,6 +6,15 @@ jobs:
     Compile:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
-            - run: yarn
-            - run: npx webpack
+            - name: checkout
+              uses: actions/checkout@v2
+            - name: compile
+              run: |
+                  yarn
+                  npx webpack
+            - name: archive artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                  name: public-folder
+                  path: |
+                      public
