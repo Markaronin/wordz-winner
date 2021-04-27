@@ -1,0 +1,54 @@
+@wordz-cell-size: 100px;
+@mini-wordz-cell-size: 20px;
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+#arrowSVG {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: -1;
+}
+
+.wordzSimulator {
+    display: flex;
+    flex-wrap: wrap;
+}
+.wordzSimulator > div {
+    border: 1px solid black;
+    box-sizing: border-box;
+    flex-basis: 25%;
+    // Center text
+    text-align: center;
+    vertical-align: middle;
+}
+
+#wordzSimulator {
+    width: @wordz-cell-size * 4;
+}
+#wordzSimulator > div {
+    font-size: x-large;
+    height: @wordz-cell-size;
+    line-height: @wordz-cell-size;
+}
+
+.miniWordzSimulator {
+    width: @mini-wordz-cell-size * 4;
+}
+.miniWordzSimulator > div {
+    font-size: small;
+    height: @mini-wordz-cell-size;
+    line-height: @mini-wordz-cell-size;
+}
+
+.arrow {
+    stroke: rgb(0, 0, 0);
+    stroke-width: 1;
+    marker-end: url(#markerArrow);
+}
+
+#findWordz {
+    display: none;
+}

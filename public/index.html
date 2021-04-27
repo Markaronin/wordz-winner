@@ -4,7 +4,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet/less" type="text/css" href="less/main.less" />
         <script src="//cdn.jsdelivr.net/npm/less@3.13"></script>
-        <title>Generic Interface</title>
+        <title>Wordz Winner</title>
     </head>
-    <body></body>
+    <body>
+        <input type="text" id="letters" maxlength="16" />
+        <div id="wordzSimulator" class="wordzSimulator"></div>
+        <button id="findWordz">Find Wordz</button>
+        <div id="wordz"></div>
+
+        <svg id="arrowSVG">
+            <defs>
+                <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="2" refY="6" orient="auto">
+                    <path d="M2,2 L2,11 L10,6 L2,2" style="fill: #000000" />
+                </marker>
+            </defs>
+        </svg>
+        <script src="bundle.js"></script>
+    </body>
 </html>
